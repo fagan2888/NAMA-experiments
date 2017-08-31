@@ -1,4 +1,4 @@
-function [x_sim, times, iters] = mpc_sim(mpc_prob, x_curr, T, solver, t_ref, x_ref)
+function [x_sim, times, iters, fops, gops] = mpc_sim(mpc_prob, x_curr, T, solver, t_ref, x_ref)
 % MPC_SIM simulates the discrete-time linear dynamics whose description is
 % in the mpc_prob structure, for a simulation time T, using the specified
 % solver.
@@ -24,6 +24,8 @@ n_u = size(mpc_prob.R, 2);
 
 times = zeros(1, N_sim); % solver time at each simulation step
 iters = zeros(1, N_sim); % solver iterations at each simulation step
+fops = zeros(1, N_sim); % solver operations wrt f at each simulation step
+gops = zeros(1, N_sim); % solver operations wrt g at each simulation step
 
 x_sim = zeros(n_x, 1);
 
@@ -73,6 +75,8 @@ for k_sim = 1:N_sim
             out = forbes_linear_mpc(mpc_prob, opt, out);
             times(k_sim) = out.forbes.solver.time;
             iters(k_sim) = out.forbes.solver.iterations;
+            fops(k_sim) = out.forbes.solver.operations.gradf1;
+            gops(k_sim) = out.forbes.solver.operations.proxg;
             u_curr = out.u(:, 1);
             
         case 2
@@ -83,6 +87,8 @@ for k_sim = 1:N_sim
             out = forbes_linear_mpc(mpc_prob, opt, out);
             times(k_sim) = out.forbes.solver.time;
             iters(k_sim) = out.forbes.solver.iterations;
+            fops(k_sim) = out.forbes.solver.operations.gradf1;
+            gops(k_sim) = out.forbes.solver.operations.proxg;
             u_curr = out.u(:, 1);
             
         case 3
@@ -93,6 +99,8 @@ for k_sim = 1:N_sim
             out = forbes_linear_mpc(mpc_prob, opt, out);
             times(k_sim) = out.forbes.solver.time;
             iters(k_sim) = out.forbes.solver.iterations;
+            fops(k_sim) = out.forbes.solver.operations.gradf1;
+            gops(k_sim) = out.forbes.solver.operations.proxg;
             u_curr = out.u(:, 1);
         
         case 4
@@ -103,6 +111,8 @@ for k_sim = 1:N_sim
             out = forbes_linear_mpc(mpc_prob, opt, out);
             times(k_sim) = out.forbes.solver.time;
             iters(k_sim) = out.forbes.solver.iterations;
+            fops(k_sim) = out.forbes.solver.operations.gradf1;
+            gops(k_sim) = out.forbes.solver.operations.proxg;
             u_curr = out.u(:, 1);
             
         case 5 % QPOASES

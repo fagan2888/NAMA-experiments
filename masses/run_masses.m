@@ -3,7 +3,7 @@ clear;
 
 rng(0, 'twister');
 
-ncontrols = 8;
+ncontrols = 8; % must be even -- use this to change system dimension
 
 [A, B, ts] = gen_masses(ncontrols);
 
@@ -54,28 +54,17 @@ opt.memory = 20;
 opt_fama = opt; opt_fama.solver = 'fbs'; opt_fama.variant = 'fast';
 opt_nama = opt; opt_nama.solver = 'nama'; opt_nama.method = 'lbfgs';
 
-% high precision options
-
-% opt_star = opt;
-% opt_star.solver = 'nama';
-% opt_star.method = 'lbfgs';
-% opt_star.tol = 1e-6;
-
 %% Solve many problems
 
-% for k_solver = 1:5
 names = {};
 time_mean = {}; % average CPU time for each solver/horizon length
 time_max = {}; % max CPU time for each solver/horizon length
-% end
-% failed = 0;
 
 Ns = 10:10:50; % horizon lengths
 nprob = 50; % number of random problems (i.e., random initial states)
-nsolvers = 5;
 
-times = zeros(length(Ns), nprob, nsolvers);
-iters = zeros(length(Ns), nprob, nsolvers);
+times = zeros(length(Ns), nprob, 5); % why 5?
+iters = zeros(length(Ns), nprob, 5); % because we will use 5 solvers
 
 for k_N = 1:length(Ns)
     

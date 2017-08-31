@@ -52,21 +52,26 @@ x0 = [0; 0; 0; 0];
 
 times = {};
 iters = {};
+fops = {};
 
 solvers = 1:10;
 
 for id = solvers
-    [x_sim, times{id}, iters{id}] = mpc_sim(mpc_prob, x0, T, id, t_ref, x_ref);
+    [x_sim, times{id}, iters{id}, fops{id}, gops{id}] = mpc_sim(mpc_prob, x0, T, id, t_ref, x_ref);
 end
 
-fprintf('%3s%12s%12s%12s%12s\n', 'id', 'avg_it', 'max_it', 'avg_cpu', 'max_cpu');
+fprintf('%3s%12s%12s%12s%12s%12s%12s%12s%12s\n', 'id', 'avg_it', 'max_it', 'avg_f', 'max_f', 'avg_g', 'max_g', 'avg_cpu', 'max_cpu');
 
 for id = solvers
     avg_it = mean(iters{id}(2:end));
     max_it = max(iters{id}(2:end));
-    avg_cpu = mean(times{id}(2:end));
-    max_cpu = max(times{id}(2:end));
-    fprintf('%3d%12.2f%12d%12.3f%12.3f\n', id, avg_it, max_it, avg_cpu, max_cpu);
+    avg_cpu = mean(times{id}(2:end))*1000;
+    max_cpu = max(times{id}(2:end))*1000;
+    avg_fops = mean(fops{id}(2:end));
+    max_fops = max(fops{id}(2:end));
+    avg_gops = mean(gops{id}(2:end));
+    max_gops = max(gops{id}(2:end));
+    fprintf('%3d%12.2f%12d%12.2f%12d%12.2f%12d%12.3f%12.3f\n', id, avg_it, max_it, avg_fops, max_fops, avg_gops, max_gops, avg_cpu, max_cpu);
 end
 
 %% Plot results
