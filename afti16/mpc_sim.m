@@ -31,6 +31,8 @@ x_sim = zeros(n_x, 1);
 
 k_ref = 1;
 
+out = [];
+
 for k_sim = 1:N_sim
     
     fprintf('.');
@@ -61,9 +63,7 @@ for k_sim = 1:N_sim
     opt.tol = 1e-4;
     opt.display = 0;
     opt.report = 0;
-    opt.prescale = 1;
     opt.memory = 20;
-    out = [];
     
     switch solver
         
