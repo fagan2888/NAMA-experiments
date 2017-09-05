@@ -3,6 +3,21 @@ clear;
 
 rng(0, 'twister');
 
+%% Select solvers to run
+
+solvers = { ...
+  'gpad', ...
+  'nama', ...
+  'gpad-scaled', ...
+  'nama-scaled', ...
+  'qpoases', ...
+  'qpoases-ws', ...
+  'mosek', ...
+  'ecos', ...
+  'sdpt3', ...
+  'sedumi', ...
+};
+
 %% Generate problem
 
 % Generate problem matrices (see afti16.m)
@@ -50,50 +65,34 @@ t_ref = [0, 2, Inf];
 x_ref = [ [0; 0; 0; 10], [0; 0; 0; 0] ];
 x0 = [0; 0; 0; 0];
 
+names = {};
 times = {};
 iters = {};
 fops = {};
+gops = {};
 
-solvers = 1:10;
-
-for id = solvers
-    [x_sim, times{id}, iters{id}, fops{id}, gops{id}] = mpc_sim(mpc_prob, x0, T, id, t_ref, x_ref);
+for k = 1:length(solvers)
+    [x_sim, times_new, iters_new, fops_new, gops_new, status] = ...
+        mpc_sim(mpc_prob, x0, T, solvers{k}, t_ref, x_ref);
+    if status == 0
+        names{end+1} = solvers{k};
+        times{end+1} = times_new;
+        iters{end+1} = iters_new;
+        fops{end+1} = fops_new;
+        gops{end+1} = gops_new;
+    end
 end
 
 fprintf('%3s%12s%12s%12s%12s%12s%12s%12s%12s\n', 'id', 'avg_it', 'max_it', 'avg_f', 'max_f', 'avg_g', 'max_g', 'avg_cpu', 'max_cpu');
 
-for id = solvers
-    avg_it = mean(iters{id}(2:end));
-    max_it = max(iters{id}(2:end));
-    avg_cpu = mean(times{id}(2:end))*1000;
-    max_cpu = max(times{id}(2:end))*1000;
-    avg_fops = mean(fops{id}(2:end));
-    max_fops = max(fops{id}(2:end));
-    avg_gops = mean(gops{id}(2:end));
-    max_gops = max(gops{id}(2:end));
-    fprintf('%3d%12.2f%12d%12.2f%12d%12.2f%12d%12.3f%12.3f\n', id, avg_it, max_it, avg_fops, max_fops, avg_gops, max_gops, avg_cpu, max_cpu);
+for k = 1:length(names)
+    avg_it = mean(iters{k}(2:end));
+    max_it = max(iters{k}(2:end));
+    avg_cpu = mean(times{k}(2:end))*1000;
+    max_cpu = max(times{k}(2:end))*1000;
+    avg_fops = mean(fops{k}(2:end));
+    max_fops = max(fops{k}(2:end));
+    avg_gops = mean(gops{k}(2:end));
+    max_gops = max(gops{k}(2:end));
+    fprintf('%13s%12.2f%12d%12.2f%12d%12.2f%12d%12.3f%12.3f\n', names{k}, avg_it, max_it, avg_fops, max_fops, avg_gops, max_gops, avg_cpu, max_cpu);
 end
-
-%% Plot results
-
-% N_sim = size(x_sim, 2);
-
-% figure;
-
-% subplot(2, 1, 1);
-% plot(Ts*(0:N_sim-1), x_sim(2,:));
-% legend('attack angle');
-
-% subplot(2, 1, 2);
-% plot(Ts*(0:N_sim-1), x_sim(4,:));
-% legend('pitch angle');
-
-% subplot(3, 1, 3);
-% semilogy(Ts*(0:N_sim-1), times{1}); hold on
-% semilogy(Ts*(0:N_sim-1), times{2});
-% semilogy(Ts*[0, N_sim-1], [Ts, Ts], ':');
-% legend(names{1:2}, 'sampling time');
-
-% for id = 1:length(names)
-%     fprintf('%30s %8.2f %8d %7.2f %7.2f\n', names{id}, mean(iters{id}(2:end)), max(iters{id}(2:end)), mean(times{id}(2:end))*1000, max(times{id}(2:end))*1000);
-% end
