@@ -206,7 +206,7 @@ for k_sim = 1:N_sim
             status = 1;
             break;
         end
-        
+
         solver_backup = cvx_solver;
         try
             cvx_solver('ecos');
@@ -240,7 +240,7 @@ for k_sim = 1:N_sim
             status = 1;
             break;
         end
-        
+
         solver_backup = cvx_solver;
         try
             cvx_solver('sdpt3');
@@ -274,7 +274,7 @@ for k_sim = 1:N_sim
             status = 1;
             break;
         end
-        
+
         solver_backup = cvx_solver;
         try
             cvx_solver('sedumi');

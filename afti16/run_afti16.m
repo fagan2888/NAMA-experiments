@@ -5,6 +5,8 @@ rng(0, 'twister');
 
 %% Select solvers to run
 
+% NOTE: the 'gpad' solver may take several minutes to complete
+
 solvers = { ...
   'gpad', ...
   'nama', ...
@@ -83,7 +85,7 @@ for k = 1:length(solvers)
     end
 end
 
-fprintf('%3s%12s%12s%12s%12s%12s%12s%12s%12s\n', 'id', 'avg_it', 'max_it', 'avg_f', 'max_f', 'avg_g', 'max_g', 'avg_cpu', 'max_cpu');
+fprintf('%13s%12s%12s%12s%12s%12s%12s%12s%12s\n', 'id', 'avg_it', 'max_it', 'avg_f', 'max_f', 'avg_g', 'max_g', 'avg_cpu', 'max_cpu');
 
 for k = 1:length(names)
     avg_it = mean(iters{k}(2:end));
